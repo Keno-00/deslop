@@ -26,8 +26,8 @@ async function initPipeline() {
         postMessage({ status: 'loading', message: 'Loading local AI model (this may take a moment on first run)...' });
 
         // We use a small instruction-tuned model capable of basic translation
-        // onnx-community/Qwen2.5-0.5B-Instruct is ~350MB and runs well in WASM/WebGPU
-        detectorPipeline = await pipeline('text-generation', 'onnx-community/Qwen2.5-0.5B-Instruct', {
+        // We use the requested Cohere Tiny-Aya model (quantized for browser webgpu)
+        detectorPipeline = await pipeline('text-generation', 'onnx-community/tiny-aya-global-ONNX', {
             device: 'webgpu', // Will fallback to wasm if webgpu isn't available
             dtype: 'q4'       // 4-bit quantization for speed and memory
         });

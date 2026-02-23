@@ -345,7 +345,6 @@ const viewCleanBtn = document.getElementById('viewClean');
 const viewDiffBtn = document.getElementById('viewDiff');
 const customPrompt = document.getElementById('customPrompt');
 const promptResetBtn = document.getElementById('promptResetBtn');
-const eyeBtn = document.getElementById('eyeBtn');
 const tierIndicator = document.getElementById('tierIndicator');
 
 // ── Sidebar toggle ────────────────────────────────────────────────────────────
@@ -367,14 +366,6 @@ document.addEventListener('keydown', (e) => {
         sidebarOpen = !sidebarOpen;
         updateSidebar();
     }
-});
-
-// ── Eye button (show/hide API key) ────────────────────────────────────────────
-
-eyeBtn.addEventListener('click', () => {
-    const isPassword = apiKeyInput.type === 'password';
-    apiKeyInput.type = isPassword ? 'text' : 'password';
-    eyeBtn.style.opacity = isPassword ? '1' : '0.5';
 });
 
 // ── Mode selection ────────────────────────────────────────────────────────────
@@ -719,14 +710,19 @@ settingsModalOverlay.addEventListener('click', (e) => {
 
 // Toggle password visibility in modal
 const toggleKeyBtn = document.getElementById('toggleKeyBtn');
-if (toggleKeyBtn) {
+const eyeIconOpen = document.getElementById('eyeIconOpen');
+const eyeIconClosed = document.getElementById('eyeIconClosed');
+
+if (toggleKeyBtn && eyeIconOpen && eyeIconClosed) {
     toggleKeyBtn.addEventListener('click', () => {
         if (apiKeyInput.type === 'password') {
             apiKeyInput.type = 'text';
-            toggleKeyBtn.textContent = '🙈';
+            eyeIconOpen.style.display = 'none';
+            eyeIconClosed.style.display = 'block';
         } else {
             apiKeyInput.type = 'password';
-            toggleKeyBtn.textContent = '👁';
+            eyeIconOpen.style.display = 'block';
+            eyeIconClosed.style.display = 'none';
         }
     });
 }
