@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deslop — Text & Code Cleaner</title>
+  <meta name="description"
+    content="Clean AI-generated prose and research text. Protect citations. Remove slop. Three precision tiers." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ── Top bar ───────────────────────────────────────────────── -->
+  <header class="topbar">
+
+    <!-- Sidebar toggle + Logo -->
+    <div class="topbar-left">
+      <button class="sidebar-toggle" id="sidebarToggle" title="Settings (S)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <div class="logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="url(#grad-logo)" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <defs>
+            <linearGradient id="grad-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--accent1)" />
+              <stop offset="100%" stop-color="var(--accent2)" />
+            </linearGradient>
+          </defs>
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+        Deslop
+      </div>
+    </div>
+
+    <!-- Mode pills -->
+    <div class="topbar-center">
+      <div class="mode-group" role="group" aria-label="Cleaning mode">
+        <button class="mode-btn" id="modeText" data-mode="text">
+          <span class="mode-icon">✦</span> Text
+        </button>
+        <button class="mode-btn" id="modeCode" data-mode="code">
+          <span class="mode-icon">&lt;/&gt;</span> Code
+        </button>
+      </div>
+    </div>
+
+    <!-- Tier + Run -->
+    <div class="topbar-right">
+      <!-- Voice view tab -->
+      <button class="voice-tab-btn" id="voiceTabBtn" title="Voice editor — humanise & detect AI patterns">✦
+        Voice</button>
+
+      <div class="topbar-sep"></div>
+
+      <!-- Tier selector -->
+      <div class="tier-group" role="group" aria-label="Processing tier">
+        <button class="tier-btn" id="tierLint" data-tier="lint" title="Light touch — fix obvious slop only">
+          <span class="tier-dot lint-dot"></span> Lint
+        </button>
+        <button class="tier-btn" id="tierClean" data-tier="clean" title="Standard clean — remove slop, tighten prose">
+          <span class="tier-dot clean-dot"></span> Clean
+        </button>
+        <button class="tier-btn" id="tierDeep" data-tier="deep" title="Deep polish — aggressive restructure">
+          <span class="tier-dot deep-dot"></span> Deep
+        </button>
+      </div>
+
+      <div class="topbar-sep"></div>
+
+      <!-- Run button -->
+      <button class="run-btn" id="runBtn" title="Run (Ctrl+Enter)">
+        <div class="spinner" id="spinner"></div>
+        <span class="run-icon">▶</span>
+        <span id="btnLabel">Run</span>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- ── App shell: sidebar + panels ──────────────────────────── -->
+  <div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <h3 class="sidebar-heading">Citation Harness</h3>
+        <p class="sidebar-hint">Wrap citations before sending to AI and restore them after, preventing accidental
+          changes.</p>
+
+        <div class="harness-toggle-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="harnessToggle" />
+            <span class="toggle-track">
+              <span class="toggle-thumb"></span>
+            </span>
+            Protect citations
+          </label>
+        </div>
+
+        <div class="harness-options" id="harnessOptions">
+          <label class="check-label">
+            <input type="checkbox" id="harnessNumeric" checked />
+            Numeric <code>[1]</code>, <code>[1,2]</code>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="harnessAuthor" checked />
+            Author-year <code>(Smith, 2021)</code>
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="harnessDoi" checked />
+            DOIs &amp; URLs
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="harnessFootnote" checked />
+            Footnotes <code>¹²³</code>
+          </label>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section" style="flex: 1;">
+        <h3 class="sidebar-heading">
+          System Prompt
+          <button class="prompt-reset-btn" id="promptResetBtn" title="Reset to default">↺ Reset</button>
+        </h3>
+        <p class="sidebar-hint">Override the AI instruction for the current mode.</p>
+        <textarea id="customPrompt" class="custom-prompt-area" placeholder="Leave blank to use built-in prompt…"
+          spellcheck="false"></textarea>
+      </div>
+
+      <!-- Account Settings Footer -->
+      <div class="sidebar-footer" id="sidebarAccountBtn" title="Account Settings">
+        <div class="account-avatar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="account-info">
+          <span class="account-name">User</span>
+          <span class="account-email">Settings</span>
+        </div>
+        <span class="account-more">⋮</span>
+      </div>
+
+    </aside>
+
+    <!-- ── Main panels ──────────────────────────── -->
+    <main class="main">
+
+      <!-- Input panel -->
+      <div class="panel" id="inputPanel">
+        <div class="panel-header">
+          <span class="panel-title">Input</span>
+          <div class="panel-header-right">
+            <span class="cit-badge" id="inputCitBadge" style="display:none;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span id="inputCitCount">0</span> citations
+            </span>
+            <span class="char-count" id="inputCount"></span>
+            <button class="clear-btn" id="clearBtn" title="Clear">✕ Clear</button>
+          </div>
+        </div>
+        <textarea id="inputArea" spellcheck="false" placeholder="Paste your text here…"></textarea>
+      </div>
+
+      <!-- Center divider + status -->
+      <div class="panel-divider">
+        <div class="divider-status" id="dividerStatus">
+          <span id="tierIndicator" class="tier-indicator"></span>
+        </div>
+      </div>
+
+      <!-- Output panel -->
+      <div class="panel" id="outputPanel">
+        <div class="panel-header">
+          <span class="panel-title">Output</span>
+          <div class="panel-header-right">
+            <span class="cit-badge cit-protected" id="outputCitBadge" style="display:none;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span id="outputCitCount">0</span> restored
+            </span>
+            <span class="char-count" id="outputCount"></span>
+            <!-- Diff toggle -->
+            <div class="view-toggle">
+              <button class="view-btn active" id="viewClean">Clean</button>
+              <button class="view-btn" id="viewDiff">Diff</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clean output -->
+        <textarea id="outputArea" spellcheck="false" readonly placeholder="Cleaned text will appear here…"></textarea>
+
+        <!-- Diff output (hidden by default) -->
+        <div id="diffArea" class="diff-area" style="display:none;"></div>
+
+        <div class="output-actions">
+          <span id="status"></span>
+          <div class="spacer"></div>
+          <button class="icon-btn" id="copyBtn">⎘ Copy</button>
+          <button class="icon-btn" id="exportBtn">↓ Export</button>
+          <button class="icon-btn voice-entry-btn" id="sendToVoiceBtn" title="Open in Voice editor">✦ Voice →</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ── Voice Panel ──────────────────────────── -->
+    <div class="voice-panel" id="voicePanel" style="display:none">
+
+      <div class="voice-toolbar">
+        <span class="voice-toolbar-title">✦ Voice Editor</span>
+        <span class="voice-status" id="voiceStatus">Paste or load text, then click Analyse.</span>
+        <div class="spacer"></div>
+        <span class="voice-flag-count" id="voiceFlagCount" style="display:none"></span>
+        <button class="icon-btn" id="voiceAnalyseBtn">Analyse</button>
+        <button class="icon-btn" id="voiceCopyBtn">⎘ Copy</button>
+        <button class="voice-tab-btn voice-back-btn" id="voiceBackBtn">← Back</button>
+      </div>
+
+      <div class="voice-body">
+        <textarea id="voiceInput" class="voice-input"
+          placeholder="Paste your cleaned text here, or use the Voice → button from the output panel…"
+          spellcheck="false"></textarea>
+        <div id="voiceEditor" class="voice-editor" style="display:none"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ── Settings Modal Overlay ──────────────────────────── -->
+  <div class="modal-overlay" id="settingsModalOverlay" style="display:none">
+    <div class="settings-modal" id="settingsModal">
+      <div class="modal-header">
+        <span class="modal-title">Account Settings</span>
+        <button class="modal-close" id="settingsCloseBtn">×</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="setting-row">
+          <label class="setting-label" for="apiKeyInput">Z AI API Key</label>
+          <div class="key-wrap">
+            <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" spellcheck="false" />
+            <button class="eye-btn" id="toggleKeyBtn" title="Show/Hide">👁</button>
+          </div>
+          <span class="setting-desc">Required for all remote model passes.</span>
+        </div>
+
+        <div class="setting-row">
+          <label class="setting-label" for="modelInput">Remote Model</label>
+          <input type="text" id="modelInput" value="GLM-4.7" placeholder="e.g. GLM-4.7" autocomplete="off" />
+        </div>
+
+        <div class="setting-row">
+          <label class="setting-label" for="nativeLangInput">Mother Tongue</label>
+          <input type="text" id="nativeLangInput" value="English" placeholder="e.g. Spanish, Hindi, Tagalog"
+            autocomplete="off" />
+          <span class="setting-desc">Used by the Voice Editor to force natural sentence structures by bouncing text
+            through your native language grammar.</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

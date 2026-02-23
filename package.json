@@ -1,0 +1,36 @@
+{
+  "name": "deslop",
+  "version": "1.0.0",
+  "description": "Remove AI slop from text and code using Z AI",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.deslop.app",
+    "productName": "Deslop",
+    "files": [
+      "index.html",
+      "style.css",
+      "app.js",
+      "main.js",
+      "icon.png"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "icon.png"
+    }
+  },
+  "devDependencies": {
+    "@electron/packager": "^19.0.5",
+    "electron": "^40.6.0",
+    "electron-builder": "^26.8.1"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1"
+  }
+}
