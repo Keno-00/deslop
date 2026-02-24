@@ -13,6 +13,7 @@ Apply ONLY these safe, low-risk fixes:
 - Remove empty caveats ("as always", "as you know", "of course")
 - Fix smart quotes to straight quotes and em-dashes to double-hyphens or commas
 - Preserve ALL citations, references, numbers, measurements, and statistics exactly as written.
+- **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y" or "It's not merely X, rather, it's Y". Be direct.
 Do NOT restructure sentences. Do NOT change anything else. If already clean, return unchanged.`,
 
         clean: `You are an anti-slop text editor. Return ONLY the cleaned text with no explanation, no meta-commentary.
@@ -23,23 +24,23 @@ First, assess the register of the text:
 
 Apply these rules to all text:
 - Remove sycophantic openers and filler affirmations
-- Remove verbose hedging ("It's worth noting that", "It's important to mention")
-- Remove filler transitions ("In conclusion,", "To summarize,", "In essence,")
-- Remove redundant caveats that add no information
-- Tighten wordy constructions: "due to the fact that" → "because"; "in order to" → "to"; "at this point in time" → "now"
-- Break up em-dash overuse; use periods or commas where natural
+- Remove verbose hedging and filler transitions
+- Tighten wordy constructions
+- **Refine Punctuation**: Break up complex, comma-heavy sentences into simpler, punchier ones. Use periods instead of em-dashes where it improves clarity.
+- **Sentence Structure**: Feel free to merge or split sentences to improve logical flow. Prioritize readability over original sentence boundaries.
 - Preserve all factual content. Do not add anything new.
+- **Avoid metalinguistic negation**: Do not use "not X, but Y" patterns.
 - If already tight, return unchanged.
 
 For GENERAL PROSE also apply:
-- Remove AI-typical rhythm padding (sentence pairs restating the same idea twice)
+- Remove AI-typical rhythm padding
 - Preserve the author's voice and tone.
 
 For ACADEMIC TEXT apply these additional constraints:
 - Preserve ALL citations, references, DOIs, and URLs exactly as written
-- Preserve ALL technical terminology, methodology, results, and measurements
+- Preserve ALL technical terminology and measurements
 - Preserve the formal academic register — do not casualise the language
-- Do NOT introduce new claims, reorder arguments, or change scientific meaning in any way`,
+- Improve sentence flow: break down dense academic jargon into clearer structures without losing precision.`,
 
         deep: `You are an expert editor performing a deep polish pass. Return ONLY the final text with no commentary.
 
@@ -48,36 +49,21 @@ First, assess the register of the text:
 - Otherwise treat it as GENERAL PROSE.
 
 Apply these rules to all text:
-- Remove sycophantic openers and filler affirmations
-- Remove verbose hedging ("It's worth noting that", "It's important to mention")
-- Remove filler transitions ("In conclusion,", "To summarize,", "In essence,")
-- Remove redundant caveats that add no information
-- Tighten wordy constructions: "due to the fact that" → "because"; "in order to" → "to"; "at this point in time" → "now"
-- Break up em-dash overuse; use periods or commas where natural
+- Remove sycophantic openers, filler affirmations, and verbose hedging.
+- **Masterful Punctuation**: Aggressively break down complex sentences. Use variety in sentence length (short for impact, long for flow). Avoid the "comma splice" or em-dash traps typical of LLMs.
+- **Flow & Cohesion**: Reorder clauses or sentences if it improves the argument's logic.
 - Preserve all factual content. Do not add anything new.
+- **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y" or "It's not merely X, rather, its Y".
 
 For GENERAL PROSE also apply:
-- Remove AI-typical rhythm padding (sentence pairs restating the same idea twice)
-- Merge adjacent sentences that express the same idea into a single tighter sentence (remove the weaker restatement)
-- Restructure awkward or passive-voice sentences for clarity and flow
-- Vary sentence openings if over-reliant on "The", "This", or "It"
-- Replace weak verbs (e.g. "is used to", "can be seen") with strong, active ones
-- Eliminate redundant adjectives and adverbs that don't carry meaning
-- Compress wordy paragraphs: target 20–30% reduction while preserving all meaning
-- Ensure logical paragraph flow and clear topic sentences
-- Preserve the author's voice and tone.
+- Eliminate redundant adjectives and adverbs.
+- Replace weak verbs with strong, active ones.
+- Compress wordy paragraphs: target 25-35% reduction without losing nuance.
 
 For ACADEMIC TEXT apply these additional constraints:
-- Preserve ALL citations, references, DOIs, and URLs exactly as written
-- Preserve ALL technical terminology, methodology, results, and measurements
-- Preserve the formal academic register — do not casualise the language
-- Do NOT introduce new claims, reorder arguments, or change scientific meaning
-- Improve paragraph cohesion: ensure each paragraph has a clear topic sentence
-- Replace weak passive constructions with active voice only where it improves clarity (keep passive where conventional in the discipline)
-- Eliminate redundant adjectives and adverbs not carrying scientific meaning
-- Ensure smooth logical transitions between ideas
-- Compress verbose sentences by 15–25% while preserving all scientific content
-- NEVER alter citations, statistics, measurements, experimental details, or conclusions`
+- Preserve ALL citations, references, and technical data exactly.
+- Improve logical transitions: break long, winding sentences into multiple precise statements.
+- Ensure the register remains formal but the structure becomes crystal clear.`
     },
 
     code: {
@@ -88,6 +74,7 @@ Apply ONLY these safe fixes:
 - Remove debug logging statements (console.log, print, logger.debug) clearly added for debugging only
 - Fix smart quotes to straight quotes
 - Remove placeholder TODO/FIXME comments with no actionable content
+- **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y".
 Do NOT refactor logic. Do NOT rename anything. If already clean, return unchanged.`,
 
         clean: `You are an anti-slop code cleaner. Return ONLY the cleaned code with no explanation, no markdown fences.
@@ -101,6 +88,7 @@ Apply these rules:
 - Inline single-use variables where it improves clarity
 - Remove boilerplate docstrings that just restate the function signature
 - Keep all functional logic intact. Minimize the diff. Never change behaviour.
+- **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y". Be direct.
 - If already clean, return unchanged.`,
 
         deep: `You are a senior code reviewer performing a deep cleanup. Return ONLY the final code with no explanation, no markdown fences.
@@ -122,7 +110,8 @@ Additionally apply these deep cleanup rules:
 - Simplify nested conditionals where possible (early returns, guard clauses)
 - Ensure consistent naming conventions within the snippet
 - Remove dead code paths and unreachable branches
-- Never change visible behaviour or external API surface.`
+- Never change visible behaviour or external API surface.
+- **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y".`
     },
 };
 
@@ -138,7 +127,7 @@ function buildCitationHint() {
 
     const types = [];
     if (harnessNumeric) types.push('numeric references such as [1], [1,2], [1-3]');
-    if (harnessAuthor) types.push('author-year citations such as (Smith, 2021), (van den Berg et al., 2020), (Smith, Jones & Brown, 2019), (Smith, 2018; Jones, 2020)');
+    if (harnessAuthor) types.push('author-year citations such as (Smith, 2021), (van den Berg et al., 2020), (Smith, Jones & Brown, 2019), (Smith, 2018; Jones, 2020); also narrative citations like Smith (2021), van den Berg et al. (2020)');
     if (harnessDoi) types.push('DOIs (10.xxxx/...) and URLs (http/https)');
     if (harnessFootnote) types.push('superscript footnote markers such as ¹²³');
 
@@ -154,7 +143,8 @@ async function extractCitationsWithAI(text, apiKey, model) {
 Look for: ${hint}.
 
 Rules:
-- Return ONLY a valid JSON array, e.g. ["(Smith, 2021)", "[1,2]", "10.1000/xyz"]
+- Return ONLY a valid JSON array, e.g. ["(Smith, 2021)", "Smith (2021)", "[1,2]", "10.1000/xyz"]
+- Include narrative citations where the author's name is outside the parentheses, e.g., "Smith (2021)"
 - Each element must be the EXACT substring as it appears in the text — character for character
 - Do NOT paraphrase, normalise, or merge citations
 - If no citations are found, return []
@@ -197,9 +187,11 @@ Rules:
         citations = [];
     }
 
-    // Deduplicate while preserving order
+    // Deduplicate and sort by length DESC (crucial so that [10] is replaced before [1])
     const seen = new Set();
-    const unique = citations.filter(c => typeof c === 'string' && c.length > 0 && !seen.has(c) && seen.add(c));
+    const unique = citations
+        .filter(c => typeof c === 'string' && c.length > 0 && !seen.has(c) && seen.add(c))
+        .sort((a, b) => b.length - a.length);
 
     // Tokenize: replace each citation string with a stable token (all occurrences)
     const map = {};
@@ -397,7 +389,7 @@ modeBtns.forEach(btn => {
 
 const tierBtns = document.querySelectorAll('.tier-btn');
 
-const TIER_LABELS = { lint: '⚡ Lint', clean: '✦ Clean', deep: '🔬 Deep' };
+const TIER_LABELS = { lint: 'Lint', clean: 'Clean', deep: 'Deep' };
 
 function updateTier(tier) {
     currentTier = tier;
@@ -504,15 +496,15 @@ copyBtn.addEventListener('click', async () => {
     if (!outputArea.value) return;
     try {
         await navigator.clipboard.writeText(outputArea.value);
-        copyBtn.textContent = '✓ Copied!';
+        copyBtn.textContent = 'Copied!';
         copyBtn.classList.add('copied');
         setTimeout(() => {
-            copyBtn.textContent = '⎘ Copy';
+            copyBtn.textContent = 'Copy';
             copyBtn.classList.remove('copied');
         }, 2000);
     } catch {
         copyBtn.textContent = 'Failed';
-        setTimeout(() => { copyBtn.textContent = '⎘ Copy'; }, 2000);
+        setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
     }
 });
 
@@ -556,7 +548,7 @@ async function runDeslop() {
     if (isLoading) return;
 
     const apiKey = apiKeyInput.value.trim();
-    const model = modelInput.value.trim() || 'glm-4-flash';
+    const model = modelInput.value.trim() || 'GLM-4.5-Air';
     const rawText = inputArea.value.trim();
 
     if (!apiKey) { setStatus('Enter your Z AI API key in the sidebar.', 'error'); return; }
@@ -571,7 +563,7 @@ async function runDeslop() {
     let citCount = 0;
 
     if (harnessToggle.checked) {
-        setStatus('🔍 Identifying citations…', 'warn');
+        setStatus('Identifying citations...', 'warn');
         setLoading(true);
         outputArea.classList.remove('fade-in');
 
@@ -581,7 +573,7 @@ async function runDeslop() {
         citCount = result.count;
 
         if (citCount > 0) {
-            setStatus(`🔒 ${citCount} citation${citCount > 1 ? 's' : ''} protected. Cleaning…`, 'warn');
+            setStatus(`${citCount} citation${citCount > 1 ? 's' : ''} protected. Cleaning...`, 'warn');
         } else {
             setStatus('No citations found. Cleaning…');
         }
@@ -607,7 +599,8 @@ async function runDeslop() {
                     { role: 'user', content: textToSend }
                 ],
                 temperature: 0.1,
-                max_tokens: 8192
+                max_tokens: 2048,
+                stream: true
             })
         });
 
@@ -617,28 +610,57 @@ async function runDeslop() {
             throw new Error(errMsg);
         }
 
-        const data = await response.json();
-        let result = data?.choices?.[0]?.message?.content ?? '';
-        if (!result) throw new Error('Empty response from API');
+        // ── Streaming response ──
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let result = '';
 
-        // ── Restore citations ──
-        if (citCount > 0) {
-            result = restoreCitations(result, citationMap);
-            outputCitCount.textContent = citCount;
-            outputCitBadge.style.display = 'inline-flex';
-        } else {
-            outputCitBadge.style.display = 'none';
+        outputArea.value = ''; // Clear for streaming
+        outputArea.classList.add('fade-in');
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const dataLine = line.slice(6).trim();
+                    if (dataLine === '[DONE]') break;
+
+                    try {
+                        const json = JSON.parse(dataLine);
+                        const content = json.choices[0]?.delta?.content || '';
+                        result += content;
+                        outputArea.value = result;
+                        // Auto-scroll output
+                        outputArea.scrollTop = outputArea.scrollHeight;
+                        updateCounts();
+                    } catch (e) {
+                        // Ignore parse errors for partial chunks
+                    }
+                }
+            }
         }
 
-        const cleaned = result.trim();
+        // ── Restore citations and finalize ──
+        const cleaned = citCount > 0 ? restoreCitations(result, citationMap).trim() : result.trim();
 
         // Store originals for diff
         lastOriginal = rawText;
         lastCleaned = cleaned;
 
         outputArea.value = cleaned;
-        outputArea.classList.add('fade-in');
         updateCounts();
+
+        if (citCount > 0) {
+            outputCitCount.textContent = citCount;
+            outputCitBadge.style.display = 'inline-flex';
+        } else {
+            outputCitBadge.style.display = 'none';
+        }
 
         // Re-render diff if diff view is active
         if (currentView === 'diff') renderDiff(lastOriginal, lastCleaned);
@@ -663,7 +685,7 @@ inputArea.addEventListener('keydown', (e) => {
 
 function init() {
     const savedKey = localStorage.getItem(STORAGE_KEY) || '';
-    const savedModel = localStorage.getItem(STORAGE_MODEL) || 'GLM-4.7';
+    const savedModel = localStorage.getItem(STORAGE_MODEL) || 'GLM-4.5-Air';
     const savedNative = localStorage.getItem('Z_NATIVE_LANG') || 'English';
 
     apiKeyInput.value = savedKey;
@@ -729,34 +751,47 @@ if (toggleKeyBtn && eyeIconOpen && eyeIconClosed) {
 
 // ── Voice Editor ──────────────────────────────────────────────────────────────
 
-const VOICE_PROMPT = `You are a fast AI-writing detector and humanising editor. Analyse the text and flag segments that sound artificial.
+// ── Voice Editor Prompts ──────────────────────────────────────────────────
 
-Return ONLY a flat list of flagged segments using exactly this 4-line format per flag, separated by "---":
-[type]
-[exact text from source]
-[short reason]
-[suggested rewrite, or empty if delete]
----
-[type]
-...
-
-Type definitions:
-- repetition: two adjacent sentences making the same point (flag the weaker one)
-- robotic: stilted, unnatural phrasing
-- over-logical: excessive transition signposting ("Furthermore,", "It is evident that")
-- ai-rhythm: predictable alternating short/long sentence patterns
-- over-formal: unnecessarily formal phrasing
+const VOICE_DIRECT_PROMPT = `You are a linguistic "humanizer" and anti-slop editor. 
+Your goal is to convert robotic, formal, or AI-generated English into plain, natural, and warm conversational English.
 
 Rules:
-- [exact text from source] MUST exactly match a substring in the provided text.
-- Return NOTHING else. No markdown, no JSON, no intro text.
-- If the text is completely natural, return exactly: NONE`;
+- AVOID AI rhythm, corporate jargon, and over-engineered academic phrasing.
+- Speak like an intelligent human in a direct, punchy, and rhythmic way.
+- Vary sentence length and structure to feel organic.
+- Preserve the core meaning but remove all "slop".
+- **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y" or "It's not merely X, rather, it's Y". Be direct.
+ 
+Return ONLY the final English rewrite. No quotes, no explanations.`;
+
+const VOICE_BATCH_DUAL_PROMPT = `You are a linguistic humanizer. Convert robotic or formal phrases in their native tongue back into plain, natural, and warm English.
+TASK:
+1. Kill the Slop: Avoid AI rhythm and bureaucratic words.
+2. Conversational English: Use common, punchy English. 
+3. **Punctuation Liberty**: Break long, winding sentences into simpler ones. Use periods or commas where they improve the "human" rhythm. 
+4. No Monotony: Vary sentence length.
+5. Preserve the "Soul": Capture the original human intent from the native tongue.
+6. **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y" or "It's not merely X, rather, its Y". Be direct.
+ 
+Return ONLY a JSON array of strings in the exact same order. No markdown, no explanations.`;
+
+const VOICE_BATCH_DIRECT_PROMPT = `You are a linguistic humanizer. Convert these stilted English segments into natural, conversational English.
+TASK:
+1. Kill the Slop: Avoid AI rhythm and corporate jargon.
+2. Use active verbs and simple, direct structure.
+3. **Punctuation Variety**: Don't be afraid to break up complex punctuation. Use variety in sentence length to improve readability.
+4. Vary sentence rhythms to avoid the robotic 12-15 word constant length.
+5. **Avoid metalinguistic negation**: Do not use narrative patterns like "It's not X, but Y" or "It's not merely X, rather, its Y". Be direct.
+ 
+Return ONLY a JSON array of strings in the exact same order. No markdown, no explanations.`;
 
 // Voice DOM elements
 const voiceTabBtn = document.getElementById('voiceTabBtn');
 const voicePanel = document.getElementById('voicePanel');
 const mainPanelContainer = document.querySelector('.main');
 const sendToVoiceBtn = document.getElementById('sendToVoiceBtn');
+const voiceManualFlagBtn = document.getElementById('voiceManualFlagBtn');
 
 const voiceAnalyseBtn = document.getElementById('voiceAnalyseBtn');
 const voiceCopyBtn = document.getElementById('voiceCopyBtn');
@@ -804,8 +839,8 @@ sendToVoiceBtn.addEventListener('click', () => {
     toggleVoiceView(true);
 });
 
-// Run Local Analysis call (Detection + Native Translation)
-voiceAnalyseBtn.addEventListener('click', () => {
+// Run Remote Analysis call (Detection + Native Translation)
+voiceAnalyseBtn.addEventListener('click', async () => {
     if (isLoading) return;
     const text = voiceInput.style.display !== 'none' ? voiceInput.value.trim() : getVoiceCurrentText();
     if (!text) {
@@ -814,117 +849,202 @@ voiceAnalyseBtn.addEventListener('click', () => {
     }
 
     const nativeLanguage = localStorage.getItem('Z_NATIVE_LANG') || 'English';
-    const remoteModel = localStorage.getItem(STORAGE_MODEL) || 'GLM-4.7';
+    const remoteModel = localStorage.getItem(STORAGE_MODEL) || 'GLM-4.5-Air';
     const apiKey = localStorage.getItem(STORAGE_KEY);
 
     if (!apiKey) {
-        voiceStatus.textContent = 'API key required for remote rewrite (set in ⚙️ Settings).';
+        voiceStatus.textContent = 'API key required for remote rewrite (set in Settings).';
         // Open modal automatically
         toggleSettingsModal(true);
         return;
     }
 
     setLoading(true);
-    voiceStatus.textContent = 'Starting local ML detection...';
+    voiceStatus.textContent = 'Starting remote ML detection...';
     voiceAnalyseBtn.disabled = true;
 
-    // Use Web Worker for Transformers.js inference
-    const worker = new Worker('worker.js', { type: 'module' });
+    const SYSTEM_PROMPT_PASS_1 = `You are a linguistic AI editor. Analyse the given text for two categories:
+1. **Slop**: Segments that sound robotic, generic, overly formal, OR segments with high lexical complexity/jargon that a non-native English speaker might struggle to comprehend.
+2. **Excellence**: Segments that sound remarkably human, clear, punchy, or naturally rhythmic.
 
-    worker.postMessage({ type: 'analyze', text, nativeLanguage });
+Output ONLY a JSON array with this exact structure, nothing else:
+[
+  {
+    "type": "<robotic|repetition|over-formal|ai-rhythm|cohesion|natural>",
+    "text": "<the EXACT verbatim English text span from the source, INCLUDING all punctuation and spaces>",
+    "reason": "<short reason why it sounds like AI/complex OR why it sounds natural/human>",
+    "translation": "<if slop: natural translation of this span into Native Language; if natural: leave empty string>",
+    "suggestion": "<a natural, humanized English rewrite of this segment>"
+  }
+]
 
-    worker.onmessage = async (e) => {
-        const { status, message, annotations, error } = e.data;
+CRITICAL: The "text" field MUST be an exact string-for-string match of the original text. Do not rewrite, improve, or fix the text in the "text" field.
 
-        if (status === 'loading' || status === 'analyzing') {
-            voiceStatus.textContent = message;
-        } else if (status === 'error') {
-            voiceStatus.textContent = `Local ML Error: ${error}`;
-            setLoading(false);
-            voiceAnalyseBtn.disabled = false;
-            worker.terminate();
-        } else if (status === 'complete') {
-            voiceStatus.textContent = 'Local scan complete. Triggering remote rewrite...';
+Definitions:
+- "cohesion": Phrasing that is grammatically correct but dense, jargon-heavy, or complex logic.
+- "natural": High-quality human-sounding text. Identify these to confirm the text is working well.
 
-            // Generate IDs for mapping and render the blank suggestions immediately
-            currentAnnotations = (annotations || []).map((ann, idx) => ({
-                ...ann,
-                id: `ann_${idx}`,
-                suggestion: '' // Will stream in
-            }));
+Analyze the entire text. Do not limit your findings; identify all segments that are remarkably good or significantly problematic.
+Do not wrap in markdown or explain your reasoning.
+ 
+SPECIAL RULE: Specifically flag and fix any metalinguistic negation patterns (e.g., "It's not merely X, it's Y").`;
 
-            renderVoiceEditor(text, currentAnnotations);
+    const promptPass1 = `Target Native Language: ${nativeLanguage}\n\nText to analyze:\n"""\n${text}\n"""`;
 
-            // Kick off the remote API to translate the Mother Tongue back to human English
-            await fetchRemoteSuggestions(currentAnnotations, nativeLanguage, remoteModel, apiKey);
+    try {
+        const response = await fetch(`${BASE_URL}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+                model: remoteModel,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT_PASS_1 },
+                    { role: 'user', content: promptPass1 }
+                ],
+                temperature: 0.1,
+                max_tokens: 1024
+            })
+        });
 
-            setLoading(false);
-            voiceAnalyseBtn.disabled = false;
-            voiceStatus.textContent = 'Suggestions generated. Edit flagged segments below.';
-            worker.terminate();
+        if (!response.ok) {
+            let errMsg = `HTTP ${response.status}`;
+            try { const e = await response.json(); errMsg = e?.error?.message || errMsg; } catch { }
+            throw new Error(errMsg);
         }
-    };
+
+        const data = await response.json();
+        const msg = data?.choices?.[0]?.message;
+        const rawResponse = msg?.content || msg?.reasoning_content || '[]';
+
+        // Robust JSON extraction: look for the first [ and last ]
+        let cleanedResponse = rawResponse.trim();
+        const startIdx = cleanedResponse.indexOf('[');
+        const endIdx = cleanedResponse.lastIndexOf(']');
+
+        if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+            cleanedResponse = cleanedResponse.substring(startIdx, endIdx + 1);
+        } else {
+            cleanedResponse = cleanedResponse.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+        }
+
+        let annotations = [];
+        try {
+            annotations = JSON.parse(cleanedResponse);
+            if (!Array.isArray(annotations)) annotations = [];
+        } catch (err) {
+            console.warn('Failed to parse JSON from Pass 1 remote model. Raw:', rawResponse);
+            // Fallback: try one more attempt with a more aggressive regex if simple index fails
+            const jsonMatch = rawResponse.match(/\[\s*\{.*\}\s*\]/s);
+            if (jsonMatch) {
+                try { annotations = JSON.parse(jsonMatch[0]); } catch (e) { annotations = []; }
+            } else {
+                annotations = [];
+            }
+        }
+
+        voiceStatus.textContent = 'Detection complete. Triggering native rewrite passes...';
+
+        // Generate IDs for mapping and render the sugestions immediately (Pass 2 removed as it is now integrated into Pass 1)
+        currentAnnotations = annotations.map((ann, idx) => ({
+            ...ann,
+            type: ann.type || 'flagged',
+            id: `ann_${idx}`,
+            suggestion: ann.suggestion || ''
+        }));
+
+        renderVoiceEditor(text, currentAnnotations, 'direct');
+
+        setLoading(false);
+        voiceAnalyseBtn.disabled = false;
+        // Status is now handled by renderVoiceEditor
+
+    } catch (error) {
+        voiceStatus.textContent = `Remote ML Error: ${error.message}`;
+        setLoading(false);
+        voiceAnalyseBtn.disabled = false;
+    }
 });
 
-// Remote Step 2: Mother Tongue -> Localised English
-async function fetchRemoteSuggestions(annotations, nativeLanguage, model, apiKey) {
-    const fetchPromises = annotations.map(async (ann) => {
-        // Skip if the local model didn't actually produce a translation output
-        if (!ann.translation) return;
+// Remote Step 2: Mother Tongue -> Localised English (Batched for speed)
+// mode: 'dual' | 'direct'
+async function fetchRemoteSuggestions(annotations, nativeLanguage, model, apiKey, mode = 'dual') {
+    const isDual = mode === 'dual';
+    const toProcess = isDual ? annotations.filter(ann => ann.translation) : annotations;
+    if (toProcess.length === 0) return;
 
-        const SYSTEM_REWRITE = `You are a translator tasked with converting native conversational text back into English. 
-The user is a native ${nativeLanguage} speaker. They provided this phrase in their mother tongue:
-"${ann.translation}"
+    const systemPrompt = isDual ? VOICE_BATCH_DUAL_PROMPT : VOICE_BATCH_DIRECT_PROMPT;
+    const userContent = JSON.stringify(isDual ? toProcess.map(ann => ann.translation) : toProcess.map(ann => ann.text));
 
-TASK:
-Translate this phrase into English, but structurally build the new English sentence mimicking the natural conversational flow, phrasing, and idiosyncratic logic of the ${nativeLanguage} original. Avoid typical "AI rhythm".
-Return ONLY the final English rewrite. No markdown, no quotes, no explanations.`;
+    try {
+        const response = await fetch(`${BASE_URL}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+                model,
+                messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userContent }],
+                temperature: 0.3,
+                max_tokens: 1024
+            })
+        });
 
-        try {
-            const response = await fetch(`${BASE_URL}/chat/completions`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-                body: JSON.stringify({
-                    model,
-                    messages: [{ role: 'system', content: SYSTEM_REWRITE }],
-                    temperature: 0.3,
-                    max_tokens: 500
-                })
-            });
+        if (response.ok) {
+            const data = await response.json();
+            let rawResult = data?.choices?.[0]?.message?.content ?? '[]';
 
-            if (response.ok) {
-                const data = await response.json();
-                let rewrite = data?.choices?.[0]?.message?.content ?? '';
-                rewrite = rewrite.replace(/^"|"$/g, '').trim(); // Remove rogue quotes
+            // Clean up JSON if model wrapped it
+            rawResult = rawResult.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
 
-                // Update the state array
-                const index = currentAnnotations.findIndex(a => a.id === ann.id);
-                if (index > -1) {
-                    currentAnnotations[index].suggestion = rewrite;
-
-                    // Live update the DOM card if it's already rendered
-                    const card = document.getElementById(`card_${ann.id}`);
-                    if (card) {
-                        const sugDiv = card.querySelector('.v-card-suggestion');
-                        const editArea = card.querySelector(`#edit_${ann.id}`);
-                        if (sugDiv) sugDiv.innerHTML = rewrite;
-                        if (editArea && !editArea.value) editArea.value = rewrite;
-                    }
-                }
+            let rewrites = [];
+            try {
+                rewrites = JSON.parse(rawResult);
+            } catch (e) {
+                console.error("Failed to parse batched rewrites:", e);
+                // Fallback: stay on loading/error
             }
-        } catch (e) {
-            console.error(`Failed remote rewrite for segment ${ann.id}:`, e);
-        }
-    });
 
-    // Wait for all the parallel API requests to finish
-    await Promise.allSettled(fetchPromises);
+            if (Array.isArray(rewrites)) {
+                rewrites.forEach((rewrite, i) => {
+                    const ann = toProcess[i];
+                    if (!ann) return;
+
+                    const cleanedRewrite = rewrite.replace(/^"|"$/g, '').trim();
+
+                    // Update state
+                    const index = currentAnnotations.findIndex(a => a.id === ann.id);
+                    if (index > -1) {
+                        currentAnnotations[index].suggestion = cleanedRewrite;
+
+                        // Live update DOM
+                        const card = document.getElementById(`card_${ann.id}`);
+                        if (card) {
+                            const sugDiv = card.querySelector('.v-card-suggestion');
+                            const editArea = card.querySelector(`#edit_${ann.id}`);
+                            if (sugDiv) sugDiv.innerHTML = cleanedRewrite;
+                            if (editArea && !editArea.value) editArea.value = cleanedRewrite;
+                        }
+                    }
+                });
+            }
+        } else {
+            throw new Error(`Batch API error: ${response.status}`);
+        }
+    } catch (e) {
+        console.error(`Failed batched remote rewrite (${mode}):`, e);
+        // Show error in UI for all pending
+        toProcess.forEach(ann => {
+            const card = document.getElementById(`card_${ann.id}`);
+            if (card) {
+                const sugDiv = card.querySelector('.v-card-suggestion');
+                if (sugDiv) sugDiv.innerHTML = '<span style="color:var(--danger)">Failed to generate suggestion.</span>';
+            }
+        });
+    }
 }
 
 // Render the interactive inline editor
-function renderVoiceEditor(baseText, annotations) {
+function renderVoiceEditor(baseText, annotations, mode = 'direct') {
     if (annotations.length === 0) {
-        voiceStatus.textContent = 'No AI patterns found. Text sounds natural! ✨';
+        voiceStatus.textContent = 'No AI patterns found. Text sounds natural.';
         voiceFlagCount.style.display = 'none';
         voiceInput.style.display = 'block';
         voiceEditor.style.display = 'none';
@@ -936,15 +1056,127 @@ function renderVoiceEditor(baseText, annotations) {
     voiceFlagCount.style.display = 'inline-block';
 
     // Build an array of text + annotation segments by finding them in the baseText.
-    // We do simple indexOf searching for now (assumes non-overlapping distinct spans, or first match wins)
     let annotatedSegments = [];
-    let remainingText = baseText;
 
-    // Sort annotations by their occurrence in the text to parse safely
-    const locatedAnnotations = annotations.map(ann => ({
-        ...ann,
-        index: baseText.indexOf(ann.text)
-    })).filter(a => a.index !== -1).sort((a, b) => a.index - b.index);
+    function findRobustIndex(text, target, startSearchFrom) {
+        // Normalise utility to handle "smart" characters
+        const superNormalise = (s) => s.toLowerCase()
+            .replace(/[\u201C\u201D]/g, '"') // smart quotes
+            .replace(/[\u2018\u2019]/g, "'") // smart single quotes
+            .replace(/[\u2013\u2014]/g, '-') // dashes
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        const normText = superNormalise(text);
+        const normTarget = superNormalise(target);
+
+        // 1. Exact match first (most common)
+        const trimmedTarget = target.trim();
+        const exact = text.indexOf(trimmedTarget, startSearchFrom);
+        if (exact !== -1) return { index: exact, matchedText: trimmedTarget };
+
+        // 2. Fuzzy match (ignore case, whitespace, and smart quotes)
+        const escaped = trimmedTarget
+            .replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // escape regex
+            .replace(/\s+/g, '[\\s\\r\\n]+')       // flexible whitespace
+            .replace(/["\u201C\u201D]/g, '["\u201C\u201D]') // flexible double quotes
+            .replace(/['\u2018\u2019]/g, "['\u2018\u2019]"); // flexible single quotes
+
+        if (!escaped) return { index: -1 };
+
+        try {
+            const re = new RegExp(escaped, 'gi');
+            re.lastIndex = startSearchFrom;
+            const match = re.exec(text);
+            if (match) return { index: match.index, matchedText: match[0] };
+        } catch (e) {
+            console.error("Fuzzy regex match failed:", e);
+        }
+
+        // 3. Ultra-fuzzy match (ignore punctuation and whitespace)
+        const stripPunct = (s) => s.toLowerCase().replace(/[^a-z0-9]/gi, '');
+        const targetStripped = stripPunct(target);
+        if (targetStripped.length > 3) {
+            // Search through the text for a segment that, when stripped, matches targetStripped
+            // To keep it performant, we only check around the startSearchFrom area
+            let windowSize = target.length * 1.5 + 20;
+            let segmentToSearch = text.substring(startSearchFrom, startSearchFrom + windowSize);
+
+            // This is still complex to map back perfectly, but let's try a simpler heuristic:
+            // most AI variations are just missing a trailing comma or using a different quote.
+            const genericEscaped = target.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                .split(/\s+/).join('\\s*[^a-z0-9]*\\s*');
+            try {
+                const re2 = new RegExp(genericEscaped, 'gi');
+                re2.lastIndex = startSearchFrom;
+                const match2 = re2.exec(text);
+                if (match2) return { index: match2.index, matchedText: match2[0] };
+            } catch (e) { }
+        }
+
+        // 4. Final Fallback: Character-only search
+        const alphaOnly = (s) => s.toLowerCase().replace(/[^a-z0-9]/gi, '');
+        const targetAlpha = alphaOnly(target);
+        if (targetAlpha.length > 3) {
+            const textAlpha = alphaOnly(text.substring(startSearchFrom));
+            const alphaIdx = textAlpha.indexOf(targetAlpha);
+            if (alphaIdx !== -1) {
+                // We found a match in alpha-only space. 
+                // We need to map it back. This is an approximation.
+                // We'll search for the first and last alpha chars of the target.
+                let startChar = targetAlpha[0];
+                let endChar = targetAlpha[targetAlpha.length - 1];
+                let firstPos = text.toLowerCase().indexOf(startChar, startSearchFrom);
+                if (firstPos !== -1) {
+                    // Approximate the length
+                    let approximateEnd = firstPos + target.length + 10;
+                    return { index: firstPos, matchedText: text.substring(firstPos, Math.min(approximateEnd, text.length)) };
+                }
+            }
+        }
+
+        return { index: -1 };
+    }
+
+    // Sort and locate annotations
+    const locatedAnnotations = [];
+    let lastFoundIdx = 0;
+
+    // Process each annotation
+    annotations.forEach(ann => {
+        const result = findRobustIndex(baseText, ann.text, lastFoundIdx);
+        if (result.index !== -1) {
+            locatedAnnotations.push({
+                ...ann,
+                index: result.index,
+                text: result.matchedText // Use original text for rendering
+            });
+            // Update lastFoundIdx for the next search to handle duplicates in order
+            lastFoundIdx = result.index + result.matchedText.length;
+        } else {
+            // Fallback: try from start if not found sequentially
+            const retry = findRobustIndex(baseText, ann.text, 0);
+            if (retry.index !== -1) {
+                locatedAnnotations.push({
+                    ...ann,
+                    index: retry.index,
+                    text: retry.matchedText
+                });
+            } else {
+                console.warn("Could not locate annotation in source text:", ann.text);
+            }
+        }
+    });
+
+    locatedAnnotations.sort((a, b) => a.index - b.index);
+
+    if (annotations.length > 0 && locatedAnnotations.length === 0) {
+        voiceStatus.textContent = `Matching failed! Found ${annotations.length} patterns by AI, but couldn't pin them to text. (AI returned different text than source)`;
+        voiceStatus.style.color = 'var(--danger)';
+    } else if (annotations.length > 0) {
+        voiceStatus.textContent = `Analysis complete. Matched ${locatedAnnotations.length} of ${annotations.length} flags.`;
+        voiceStatus.style.color = '';
+    }
 
     let currentIndex = 0;
     locatedAnnotations.forEach(ann => {
@@ -990,7 +1222,7 @@ function renderVoiceEditor(baseText, annotations) {
             chip.className = 'v-chip';
             chip.dataset.type = ann.type;
             chip.title = "Click to resolve";
-            chip.innerHTML = `⚑ ${ann.type}`;
+            chip.innerHTML = ann.type;
 
             // The expandable card (hidden initially, inserted right after if toggled)
             const card = document.createElement('div');
@@ -1003,22 +1235,33 @@ function renderVoiceEditor(baseText, annotations) {
                     <span class="v-card-type">${ann.type || 'flagged'}</span>
                     <span class="v-card-reason">${ann.reason || 'AI pattern detected.'}</span>
                 </div>
-                ${ann.translation ? `
-                <div class="v-card-suggestion-label" style="opacity: 0.7; font-size: 0.7rem;">Native Translation detected: <i>"${ann.translation}"</i></div>
-                ` : ''}
-                <div class="v-card-suggestion-label" style="margin-top: 6px;">English Rewrite Suggestion</div>
-                <div class="v-card-suggestion">
-                    ${ann.suggestion ? ann.suggestion : '<span class="loading-pulse" style="opacity:0.5;">Generating native rewrite...</span>'}
+                ${ann.type === 'natural' ? `
+                <div class="v-card-suggestion-choice" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                    <div class="v-pill active" style="background: var(--success); border-color: var(--success);">Natural Flow</div>
                 </div>
+                ` : `
+                <div class="v-card-suggestion-choice" style="display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid var(--surface2); padding-bottom: 12px;">
+                    <button class="v-pill ${mode === 'direct' ? 'active' : ''}" onclick="reprocessVoiceAnnotation('${ann.id}', 'direct')">Humanize</button>
+                    <button class="v-pill ${mode === 'dual' ? 'active' : ''}" ${!ann.translation ? 'disabled' : ''} onclick="reprocessVoiceAnnotation('${ann.id}', 'dual')">Mother Tongue</button>
+                    ${!ann.translation && mode === 'dual' ? '<span style="font-size: 0.65rem; opacity: 0.5; align-self: center;">(No native translation found)</span>' : ''}
+                </div>
+
+                <div class="v-card-suggestion">
+                    ${ann.suggestion ? ann.suggestion : '<span class="loading-pulse" style="opacity:0.5;">Generating suggestion...</span>'}
+                </div>
+                `}
                 <div class="v-card-own">
                     <span class="v-card-own-label">Your Edit</span>
                     <textarea id="edit_${ann.id}" placeholder="Type your own phrasing here...">${ann.suggestion || ''}</textarea>
                 </div>
                 <div class="v-card-actions">
-                    <button class="v-btn accept" onclick="resolveVoiceAnnotation('${ann.id}', 'suggest')">Accept suggestion</button>
-                    <button class="v-btn accept" onclick="resolveVoiceAnnotation('${ann.id}', 'delete')">Delete segment</button>
-                    <button class="v-btn use-own" onclick="resolveVoiceAnnotation('${ann.id}', 'own')">Use my edit</button>
-                    <button class="v-btn dismiss" onclick="resolveVoiceAnnotation('${ann.id}', 'dismiss')">Dismiss</button>
+                    ${ann.type === 'natural' ? `
+                    <button class="v-btn accept" onclick="resolveVoiceAnnotation('${ann.id}', 'accept')">Confirm Excellence</button>
+                    ` : `
+                    <button class="v-btn accept" onclick="resolveVoiceAnnotation('${ann.id}', 'accept')">Apply Suggestion</button>
+                    <button class="v-btn use-own" onclick="resolveVoiceAnnotation('${ann.id}', 'own')">Use My Edit</button>
+                    <button class="v-btn dismiss" onclick="resolveVoiceAnnotation('${ann.id}', 'dismiss')">Ignore</button>
+                    `}
                 </div>
             `;
 
@@ -1068,6 +1311,35 @@ function getVoiceCurrentText() {
     return fullText;
 }
 
+window.reprocessVoiceAnnotation = async function (id, mode) {
+    const ann = currentAnnotations.find(a => a.id === id);
+    if (!ann) return;
+
+    const card = document.getElementById(`card_${id}`);
+    if (card) {
+        const sugDiv = card.querySelector('.v-card-suggestion');
+        if (sugDiv) sugDiv.innerHTML = '<span class="loading-pulse" style="opacity:0.5;">Generating...</span>';
+
+        // Update active pill
+        card.querySelectorAll('.v-pill').forEach(p => p.classList.toggle('active', p.getAttribute('onclick').includes(`'${mode}'`)));
+    }
+
+    const apiKey = localStorage.getItem(STORAGE_KEY);
+    const model = localStorage.getItem(STORAGE_MODEL) || 'GLM-4.5-Air';
+    const nativeLanguage = localStorage.getItem('Z_NATIVE_LANG') || 'English';
+
+    if (!apiKey) {
+        voiceStatus.textContent = 'API key required.';
+        return;
+    }
+
+    try {
+        await fetchRemoteSuggestions([ann], nativeLanguage, model, apiKey, mode);
+    } catch (err) {
+        console.error('Reprocess failed:', err);
+    }
+};
+
 window.resolveVoiceAnnotation = function (id, action) {
     const span = document.querySelector(`.flagged[data-id="${id}"]`);
     const card = document.getElementById(`card_${id}`);
@@ -1083,7 +1355,7 @@ window.resolveVoiceAnnotation = function (id, action) {
             if (child.nodeName === 'BR') frag += '\n';
         });
         newText = frag;
-    } else if (action === 'suggest') {
+    } else if (action === 'accept') {
         const ann = currentAnnotations.find(a => a.id === id);
         newText = ann ? ann.suggestion : '';
     } else if (action === 'delete') {
@@ -1116,7 +1388,7 @@ voiceCopyBtn.addEventListener('click', async () => {
     try {
         await navigator.clipboard.writeText(text);
         const orig = voiceCopyBtn.textContent;
-        voiceCopyBtn.textContent = '✓ Copied';
+        voiceCopyBtn.textContent = 'Copied';
         voiceCopyBtn.classList.add('copied');
         setTimeout(() => {
             voiceCopyBtn.textContent = orig;
@@ -1125,4 +1397,143 @@ voiceCopyBtn.addEventListener('click', async () => {
     } catch (e) {
         console.error('Clipboard copy failed:', e);
     }
+});
+
+// ── Phrase Help Popup Logic ──────────────────────────────────────────────
+
+const voicePhraseHelpBtn = document.getElementById('voicePhraseHelpBtn');
+
+// Prevent focus shift to keep selection valid in textarea
+voicePhraseHelpBtn.addEventListener('mousedown', (e) => {
+    // Only prevent if selection exists
+    if (voiceInput.selectionStart !== voiceInput.selectionEnd) {
+        e.preventDefault();
+    }
+});
+
+const phraseHelpModalOverlay = document.getElementById('phraseHelpModalOverlay');
+const phraseHelpCloseBtn = document.getElementById('phraseHelpCloseBtn');
+const phApplyBtn = document.getElementById('phApplyBtn');
+const phCancelBtn = document.getElementById('phCancelBtn');
+const phOriginal = document.getElementById('phOriginal');
+const phTranslation = document.getElementById('phTranslation');
+const phRewrite = document.getElementById('phRewrite');
+const phNativeLang = document.getElementById('phNativeLang');
+
+function togglePhraseHelpModal(show, selection = '', context = '') {
+    if (show) {
+        phraseHelpModalOverlay.style.display = 'flex';
+        phOriginal.textContent = selection;
+        phTranslation.innerHTML = '<span class="loading-pulse" style="opacity:0.5;">Analysing...</span>';
+        phRewrite.innerHTML = '<span class="loading-pulse" style="opacity:0.5;">Refining...</span>';
+        phApplyBtn.disabled = true;
+        const native = localStorage.getItem('Z_NATIVE_LANG') || 'Native';
+        phNativeLang.textContent = native + ' Interpretation';
+        runPhraseHelp(selection, context);
+    } else {
+        phraseHelpModalOverlay.style.display = 'none';
+    }
+}
+
+async function runPhraseHelp(selection, context) {
+    const apiKey = localStorage.getItem(STORAGE_KEY);
+    const model = localStorage.getItem(STORAGE_MODEL) || 'GLM-4.7';
+    const nativeLang = localStorage.getItem('Z_NATIVE_LANG') || 'English';
+
+    if (!apiKey) {
+        phTranslation.textContent = "API Key required.";
+        phRewrite.textContent = "Please set it in settings.";
+        return;
+    }
+
+    try {
+        // Single Pass: English -> Native -> Natural English
+        const combinedPrompt = `You are an expert copyeditor and anti-slop editor.
+The user has selected a clunky or robotic phrase from a larger text that needs improvement.
+
+Full Text Context:
+"""
+${context}
+"""
+
+Selected Phrase to improve: "${selection}"
+
+Task:
+1. Based on the context, figure out the actual intended meaning. Provide a natural, meaning-based translation into ${nativeLang}. The translation MUST be extremely simple, direct, and human, phrased so that a ${nativeLang} speaker with minimal English knowledge could perfectly understand the intent. DO NOT provide a literal, word-for-word translation.
+2. Based on that ${nativeLang} translation, provide a punchy, conversational English rewrite of the phrase. Take into consideration the grammatical structures, syntax, and punctuation dispositions (or lack thereof) of the natural ${nativeLang} translation to create a meaningful, highly understandable, and humanized English version. DO NOT use "scholarly", high-falutin, or overly formal English. Keep it simple, direct, and human.
+ 
+Constraint: Avoid metalinguistic negation (e.g., "It's not X, but Y"). Be direct.
+ 
+Return ONLY a JSON object with two fields: "translation" and "rewrite". No markdown fences.`;
+
+        const response = await fetch(`${BASE_URL}/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({
+                model,
+                messages: [{ role: 'user', content: combinedPrompt }],
+                temperature: 0.3
+            })
+        });
+
+        if (!response.ok) throw new Error("API request failed");
+
+        const data = await response.json();
+        let raw = data.choices[0].message.content.trim();
+        // Remove markdown fences if present
+        raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+
+        const result = JSON.parse(raw);
+        const translation = result.translation || "Translation unavailable";
+        const rewrite = (result.rewrite || "Rewrite unavailable").replace(/^"|"$/g, '');
+
+        phTranslation.textContent = translation;
+        phRewrite.textContent = rewrite;
+        phApplyBtn.disabled = false;
+
+    } catch (err) {
+        phTranslation.textContent = "Error: " + err.message;
+        phRewrite.textContent = "Please try again.";
+    }
+}
+
+voicePhraseHelpBtn.addEventListener('click', () => {
+    let selection = "";
+
+    // Case 1: Textarea is active (Initial state)
+    if (voiceInput.style.display !== 'none') {
+        const start = voiceInput.selectionStart;
+        const end = voiceInput.selectionEnd;
+        selection = voiceInput.value.substring(start, end).trim();
+    }
+    // Case 2: Rendered Editor is active (Post-analysis state)
+    else {
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+            selection = sel.toString().trim();
+        }
+    }
+
+    if (!selection) {
+        voiceStatus.textContent = "Highlight a phrase first to get help.";
+        return;
+    }
+    const fullText = getVoiceCurrentText();
+    togglePhraseHelpModal(true, selection, fullText);
+});
+
+phApplyBtn.addEventListener('click', () => {
+    const start = voiceInput.selectionStart;
+    const end = voiceInput.selectionEnd;
+    const rewrite = phRewrite.textContent;
+    const val = voiceInput.value;
+    voiceInput.value = val.substring(0, start) + rewrite + val.substring(end);
+    togglePhraseHelpModal(false);
+    voiceStatus.textContent = "Phrase updated.";
+});
+
+phCancelBtn.addEventListener('click', () => togglePhraseHelpModal(false));
+phraseHelpCloseBtn.addEventListener('click', () => togglePhraseHelpModal(false));
+phraseHelpModalOverlay.addEventListener('click', (e) => {
+    if (e.target === phraseHelpModalOverlay) togglePhraseHelpModal(false);
 });

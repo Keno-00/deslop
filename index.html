@@ -46,7 +46,7 @@
     <div class="topbar-center">
       <div class="mode-group" role="group" aria-label="Cleaning mode">
         <button class="mode-btn" id="modeText" data-mode="text">
-          <span class="mode-icon">✦</span> Text
+          Text
         </button>
         <button class="mode-btn" id="modeCode" data-mode="code">
           <span class="mode-icon">&lt;/&gt;</span> Code
@@ -57,8 +57,7 @@
     <!-- Tier + Run -->
     <div class="topbar-right">
       <!-- Voice view tab -->
-      <button class="voice-tab-btn" id="voiceTabBtn" title="Voice editor — humanise & detect AI patterns">✦
-        Voice</button>
+      <button class="voice-tab-btn" id="voiceTabBtn" title="Voice editor — humanise & detect AI patterns">Voice</button>
 
       <div class="topbar-sep"></div>
 
@@ -80,7 +79,7 @@
       <!-- Run button -->
       <button class="run-btn" id="runBtn" title="Run (Ctrl+Enter)">
         <div class="spinner" id="spinner"></div>
-        <span class="run-icon">▶</span>
+        <span class="run-icon"></span>
         <span id="btnLabel">Run</span>
       </button>
     </div>
@@ -132,7 +131,7 @@
       <div class="sidebar-section" style="flex: 1;">
         <h3 class="sidebar-heading">
           System Prompt
-          <button class="prompt-reset-btn" id="promptResetBtn" title="Reset to default">↺ Reset</button>
+          <button class="prompt-reset-btn" id="promptResetBtn" title="Reset to default">Reset</button>
         </h3>
         <p class="sidebar-hint">Override the AI instruction for the current mode.</p>
         <textarea id="customPrompt" class="custom-prompt-area" placeholder="Leave blank to use built-in prompt…"
@@ -174,7 +173,7 @@
               <span id="inputCitCount">0</span> citations
             </span>
             <span class="char-count" id="inputCount"></span>
-            <button class="clear-btn" id="clearBtn" title="Clear">✕ Clear</button>
+            <button class="clear-btn" id="clearBtn" title="Clear">Clear</button>
           </div>
         </div>
         <textarea id="inputArea" spellcheck="false" placeholder="Paste your text here…"></textarea>
@@ -218,9 +217,9 @@
         <div class="output-actions">
           <span id="status"></span>
           <div class="spacer"></div>
-          <button class="icon-btn" id="copyBtn">⎘ Copy</button>
-          <button class="icon-btn" id="exportBtn">↓ Export</button>
-          <button class="icon-btn voice-entry-btn" id="sendToVoiceBtn" title="Open in Voice editor">✦ Voice →</button>
+          <button class="icon-btn" id="copyBtn">Copy</button>
+          <button class="icon-btn" id="exportBtn">Export</button>
+          <button class="icon-btn voice-entry-btn" id="sendToVoiceBtn" title="Open in Voice editor">Voice</button>
         </div>
       </div>
 
@@ -230,24 +229,81 @@
     <div class="voice-panel" id="voicePanel" style="display:none">
 
       <div class="voice-toolbar">
-        <span class="voice-toolbar-title">✦ Voice Editor</span>
+        <span class="voice-toolbar-title">Voice Editor</span>
         <span class="voice-status" id="voiceStatus">Paste or load text, then click Analyse.</span>
         <div class="spacer"></div>
         <span class="voice-flag-count" id="voiceFlagCount" style="display:none"></span>
+        <button class="icon-btn" id="voicePhraseHelpBtn"
+          title="Get native translation and natural rewrite for selection">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Phrase Help
+        </button>
         <button class="icon-btn" id="voiceAnalyseBtn">Analyse</button>
-        <button class="icon-btn" id="voiceCopyBtn">⎘ Copy</button>
-        <button class="voice-tab-btn voice-back-btn" id="voiceBackBtn">← Back</button>
+        <button class="icon-btn" id="voiceCopyBtn">Copy</button>
+        <button class="voice-tab-btn voice-back-btn" id="voiceBackBtn">Back</button>
       </div>
 
       <div class="voice-body">
         <textarea id="voiceInput" class="voice-input"
-          placeholder="Paste your cleaned text here, or use the Voice → button from the output panel…"
+          placeholder="Paste your cleaned text here, or use the Voice button from the output panel…"
           spellcheck="false"></textarea>
         <div id="voiceEditor" class="voice-editor" style="display:none"></div>
       </div>
 
     </div>
 
+  </div>
+
+  <!-- ── Phrase Help Modal Overlay ──────────────────────────── -->
+  <div class="modal-overlay" id="phraseHelpModalOverlay" style="display:none">
+    <div class="settings-modal" id="phraseHelpModal">
+      <div class="modal-header">
+        <span class="modal-title">Phrase Help</span>
+        <button class="modal-close" id="phraseHelpCloseBtn" title="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" style="gap: 1.2rem;">
+        <div class="setting-row">
+          <label class="setting-label">Original selection</label>
+          <div id="phOriginal"
+            style="font-style: italic; opacity: 0.8; font-size: 0.85rem; padding: 8px; background: var(--surface2); border-radius: var(--radius);">
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <label class="setting-label">Phrase Interpretation</label>
+          <div id="phTranslation"
+            style="font-family: 'Lora', serif; font-size: 1.05rem; color: var(--accent1); padding: 12px; background: var(--accent-light); border-radius: var(--radius); border-left: 3.5px solid var(--accent1); line-height: 1.5;">
+            <span class="loading-pulse" style="opacity:0.5;">Analysing...</span>
+          </div>
+          <span class="setting-desc" id="phNativeLang"
+            style="margin-top: 4px; font-style: italic; font-size: 0.7rem;">Native Interpretation</span>
+        </div>
+
+        <div class="setting-row">
+          <label class="setting-label">Scholarly Rephrasing</label>
+          <div id="phRewrite"
+            style="font-family: 'Lora', serif; font-size: 1.05rem; padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); line-height: 1.5; color: var(--text);">
+            <span class="loading-pulse" style="opacity:0.5;">Refining...</span>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="display: flex; gap: 8px; margin-top: 8px;">
+          <button class="run-btn" id="phApplyBtn" style="flex: 1;">Apply Rewrite</button>
+          <button class="icon-btn" id="phCancelBtn" style="padding: 0 16px;">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ── Settings Modal Overlay ──────────────────────────── -->
